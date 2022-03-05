@@ -1,4 +1,5 @@
 ---
+layout: post
 title: Santa's Flakpanzerkampfwagen
 author: damned-me
 date: 2021-12-14
@@ -8,9 +9,7 @@ tags:
     - python
 ---
 
-# Santa's Flakpanzerkampfwagen
-
-CTF : [X-MAS CTF 2021 First Weekend](https://ctftime.org/event/1520)
+CTF : [X-MAS CTF 2021 First Weekend][ctf_event]
 
 Despite the name it was a relatively easy one. The problem can be resumed to "we are a turrets in (0, 0), all around us planes can spawn. We know the starting positions of the planes and the corresponding coordinates after 0.5 time units (TU). Shoot 'em."
 
@@ -80,7 +79,7 @@ dn  = round(dn, 5)
 
 We can then iterate every given plane at each level and than get the flag!
 
-The complete code:
+[The complete code][solve]:
 
 ```python
 #! /bin/python3
@@ -92,6 +91,9 @@ from numpy import *
 lenM = 1300
 dt   = .5
 
+regex = r"([0-9]+):\ \(((-?[0-9]*\.[0-9]*[,|)]?\ ?){2})\ ->\ \(((-?[0-9]*\.[0-9]*[,|)]?\ ?){2})"
+reg = re.compile(regex)
+
 p = remote('challs.xmas.htsp.ro', 6003)
 p.recvuntil(b'elf>')
 p.send(b'\n')
@@ -101,14 +103,14 @@ p.recvuntil(b'yes>')
 p.send(b'\n')
 p.recvuntil(b'ready>')
 p.send(b'\n')
-
 while True:
     try:
         line = p.recvline().decode()
     except:
         break
+
     print(line)
-    reg = re.compile(r"([0-9]+):\ \(((-?[0-9]*\.[0-9]*[,|)]?\ ?){2})\ ->\ \(((-?[0-9]*\.[0-9]*[,|)]?\ ?){2})")
+
     res = reg.match(line)
     
     if(res is None):
@@ -143,7 +145,13 @@ while True:
     p.sendline((send).encode('ascii'))
 ```
 
-I used [pwntools](https://github.com/Gallopsled/pwntools) for communications and [numpy](https://numpy.org/) to perform the maths, than the standard python's regex library to parse inputs.
+I used [pwntools][pwntools_link] for communications and [numpy][numpy_link] to perform the maths, than the standard python's regex library to parse inputs.
 
 After running the script and defending the position, the program will print out our flag:
+
 `X-MAS{4NY_PR0bl3m_c4n_B3_S0lv3d_W17h_4_b16_3n0u6H_C4NN0N_hj9jh98j94}`
+
+[solve]: ./solve.py
+[numpy_link]: https://numpy.org
+[pwntools_link]: https://github.com/Gallopsled/pwntools
+[ctf_event]:https://ctftime.org/event/1520
